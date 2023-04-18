@@ -1,8 +1,5 @@
 
 import time
-import dataclasses
-import datetime
-from time import time_ns
 
 
 class MyError(Exception):
@@ -63,6 +60,16 @@ class Reset(Exception):
     pass
 
 
+def check_for_reset():
+    # change_val = int(time.time() * 1000)
+    change_val = time.monotonic_ns()
+    return change_val % 2 == 0
+
+
+def announce(remaining):
+    print(f'{remaining} ticks remaining')
+
+
 def timer(period):
     current = period
     while current:
@@ -74,31 +81,44 @@ def timer(period):
 
 
 def test3():
-    def check_for_reset():
-        # change_val = int(time.time() * 1000)
-        change_val = time.monotonic_ns()
-        return change_val % 2 == 0
-
-    def announce(remaining):
-        print(f'{remaining} ticks remaining')
-
-    def run():
-        it = timer(4)
-        while True:
-            try:
-                if check_for_reset():
-                    current = it.throw(Reset())
-                else:
-                    current = next(it)
-            except StopIteration:
-                break
+    it = timer(4)
+    while True:
+        try:
+            if check_for_reset():
+                current = it.throw(Reset())
             else:
-                announce(current)
+                current = next(it)
+        except StopIteration:
+            break
+        else:
+            announce(current)
 
-    return run()
+
+# 4. test3可读性不高，再换成类
+class Timer:
+    def __init__(self, period):
+        self.current = period
+        self.period = period
+
+    def reset(self):
+        self.current = self.period
+
+    def __iter__(self):
+        while self.current:
+            self.current -= 1
+            yield self.current
+
+
+def test4():
+    timer = Timer(4)
+    for current in timer:
+        if check_for_reset():
+            timer.reset()
+        announce(current)
 
 
 if __name__ == '__main__':
     # test1()
     # test2()
-    test3()
+    # test3()
+    test4()
