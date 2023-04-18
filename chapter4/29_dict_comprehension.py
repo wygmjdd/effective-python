@@ -31,8 +31,7 @@ result2 = {
 
 # 3. 使用海象版本，更清晰
 result3 = {
-    name: batches
-    for name in order if (batches := get_batches(stock.get(name, 0), 8))
+    name: batches for name in order if (batches := get_batches(stock.get(name, 0), 8))
 }
 
 
@@ -52,4 +51,4 @@ print(f'Last item of {list(stock.values())} is {count2}')
 # 3. count3不会溢出，print(count3)会报错
 half = [count3 // 2 for count3 in stock.values()]
 print(half)   # Works
-print(count3)  # Exception because loop variable didn't leak
+print(count3)  # Exception because loop variable didn't leak  NOQA
