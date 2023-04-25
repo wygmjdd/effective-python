@@ -1,6 +1,6 @@
 
 
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
 
 # 1. 存储学生的分数
@@ -103,7 +103,97 @@ def test3():
     print('test3:', book.average_grade(name))
 
 
+# 3.1 传参太多，使用tuple优化一把写法
+def test31():
+    # 只重写一下计算average的函数
+    grades = []
+    grades.append((95, 0.45))
+    grades.append((85, 0.55))
+    total = sum(score * weight for score, weight in grades)
+    total_weight = sum(weight for _, weight in grades)
+    average_grade = total / total_weight
+    print('test31 average_grade:', average_grade)
+
+
+# 4. 害！如果再加一个评价呢？
+def test4():
+    grades = []
+    grades.append((95, 0.45, 'Great job'))
+    grades.append((85, 0.55, 'Better next time'))
+    # 代码越写越难看了
+    total = sum(score * weight for score, weight, _ in grades)
+    total_weight = sum(weight for _, weight, _ in grades)
+    average_grade = total / total_weight
+    print('test4 average_grade:', average_grade)
+
+
+# 5. 终极优化，使用namedtuple
+Grade = namedtuple('Grade', ('score', 'weight', 'comment'))
+
+
+class Subject:
+    def __init__(self):
+        self._grades = []
+
+    def report_grade(self, grade):
+        # 这里与书中不一致，我觉得直接传grade更好些，分数要再加些变量呢？
+        self._grades.append(grade)
+
+    def average_grade(self):
+        total, total_weight = 0, 0
+        for grade in self._grades:
+            total += grade.score * grade.weight
+            total_weight += grade.weight
+        return total / total_weight
+
+
+class Student:
+    def __init__(self):
+        self._subjects = defaultdict(Subject)
+
+    def get_subject(self, name):
+        return self._subjects[name]
+
+    def average_grade(self):
+        total, count = 0, 0
+        for subject in self._subjects.values():
+            total += subject.average_grade()
+            count += 1
+        return total / count
+
+
+class Gradebook:
+    def __init__(self):
+        self._students = defaultdict(Student)
+
+    def get_student(self, name):
+        return self._students[name]
+
+
+def test5():
+    # 这一节其实更多讲的是如何写出可读性更好的代码
+    # 代码分层（Gradebook、Student、Subject、Grade）
+    #     - 每一层代码少易于理解
+    #     - 修改时只需要注意细节处就好
+    book = Gradebook()
+    albert = book.get_student('Albet Einstein')
+
+    math = albert.get_subject('Math')
+    math.report_grade(Grade(75, 0.05, '必须传递第3个参数'))
+    math.report_grade(Grade(65, 0.15, '加油'))
+    math.report_grade(Grade(70, 0.80, '有进步'))
+
+    gym = albert.get_subject('Gym')
+    gym.report_grade(Grade(100, 0.4, '完美'))
+    gym.report_grade(Grade(85, 0.6, '怎么退步了呢？'))
+
+    print('test5:', albert.average_grade())
+
+
 if __name__ == '__main__':
     test1()
     test2()
     test3()
+    test31()
+    test4()
+    test5()
