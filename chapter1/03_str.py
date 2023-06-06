@@ -9,7 +9,7 @@ def test1():
 
 # 2. 打印一个特殊字符
 def test2():
-    a = 'a\u0300 propos'
+    a = 'a\u0300 \u561F propos'
     print(list(a))
     print(a)
 
@@ -42,34 +42,36 @@ def test3():
 # 4. 计算、比较和连接
 def test4():
     # a. 同类相连
-    print(b'one' + b'two')
-    print('one' + 'two')
+    # print(b'one' + b'two')
+    # print('one' + 'two')
 
     # b. 异类报错
-    print(b'one' + 'two')
-    print('one' + b'two')
+    # print(b'one' + 'two')
+    # print('one' + b'two')
 
     # c. 同类可比
-    print(b'red' > b'blue')
-    print('red' > 'blue')
+    # print(b'red' > b'blue')
+    # print('red' > 'blue')
 
     # d. 异类报错
-    print('red' > b'blue')
-    print(b'blue' < 'red')
+    # print('red' > b'blue')
+    # print(b'blue' < 'red')
 
     # e. 两种不一样的对象
-    print(b'foo' == 'foo')
+    # print(b'foo' == 'foo')
 
     # f. 同类可拼接
-    print(b'red %s' % b'blue')
-    print('red %s' % 'blue')
+    # print(b'red %s' % b'blue')
+    # print('red %s' % 'blue')
 
     # g. str不能拼在bytes里面
-    print(b'red %s' % 'blue')
+    # print(b'red %s' % 'blue')
 
     # h. bytes可以拼在str里
     tmp = 'red %s' % b'blue'
     print(tmp, type(tmp))
+    for i in tmp:
+        print(i)
 
 
 # 5. 读写文件
